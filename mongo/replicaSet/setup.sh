@@ -12,7 +12,7 @@ priHost=$3
 arbHost=$4
 localhost=`hostname -f`
 
-#sh install.sh $1
+sh install.sh $1
 
 for host in $(echo "$2" | sed "s/,/ /g")
 do
@@ -20,9 +20,6 @@ do
     scp install.sh devops@$host:/tmp && ssh -t devops@$host sudo -s "/tmp/install.sh $1"
   fi
 done
-
-echo ....................................................
-sleep 2
 
 mongo $priHost --eval "printjson(rs.initiate('$prihost'))"
 
