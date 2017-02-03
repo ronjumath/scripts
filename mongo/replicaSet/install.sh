@@ -3,13 +3,6 @@
 
 dbPath=/data
 mongoUser=mongodb
-replName=test
-primaryHost=example.test
-
-if [ $EUID != 0 ]
-  then echo "Run the script as root"
-  exit
-fi
 
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
 echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.4.list
@@ -22,14 +15,8 @@ chown $mongoUser:$mongoUser $dbPath
 sed -i "s|/var/lib/mongodb|$dbPath|" /etc/mongod.conf
 sed -i "s|bindIp: 127.0.0.1|#bindIp: 127.0.0.1|" /etc/mongod.conf
 echo "replication:" >> /etc/mongod.conf
-echo "  replSetName: $replName" >> /etc/mongod.conf
+echo "  replSetName: $1" >> /etc/mongod.conf
 
 systemctl start mongod
 systemctl enable mongod
 
-cp rsinitiate.template /tmp/rsinitiate.js
-
-sed -i "s|replName|$replName|" /tmp/rsinitiate.js
-sed -i "s|primaryHost|$primaryHost|" /tmp/rsinitiate.js
-
-mongo example.test/admin /tmp/rsinitiate.js
