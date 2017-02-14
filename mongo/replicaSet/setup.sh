@@ -21,13 +21,15 @@ do
   fi
 done
 
-mongo $priHost --eval "printjson(rs.initiate('$prihost'))"
+mongo --host $priHost --eval "printjson(rs.initiate('$prihost'))"
 
-mongo $priHost --eval "printjson(rs.addArb('$arbHost'))"
+sleep 2
+
+mongo --host $priHost --eval "printjson(rs.addArb('$arbHost'))"
 
 for node in $(echo "$2" | sed "s/,/ /g")
 do
   if [ $node != $priHost ] && [ $node != $arbHost ]; then
-    mongo $priHost --eval "printjson(rs.add('$node'))"
+    mongo --host $priHost --eval "printjson(rs.add('$node'))"
   fi
 done
